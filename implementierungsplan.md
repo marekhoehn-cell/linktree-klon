@@ -42,7 +42,7 @@ Die Grundsatzentscheidungen aus der Sparringssession stehen vollständig in `gui
 | 07 | Profil-Section (Display-Name, Bio, Avatar-URL) | [`07-profil-section.md`](specs/07-profil-section.md) | 04 | ✅ |
 | 08 | Öffentliche Profilseite `/u/<username>` + Claim-Seite | [`08-public-profile-page.md`](specs/08-public-profile-page.md) | 05, 07 | ✅ |
 | 09 | Accent-Color: Auswahl, sichere Injektion, automatischer Kontrast | [`09-theming-accent-color.md`](specs/09-theming-accent-color.md) | 08 | ✅ |
-| 10 | Deployment: Git, GitHub, Vercel | [`10-deployment.md`](specs/10-deployment.md) | 01–09 | ⏳ |
+| 10 | Deployment: Git, GitHub, Vercel | [`10-deployment.md`](specs/10-deployment.md) | 01–09 | ✅ |
 
 **Zur Reihenfolge:** Die öffentliche Seite (08) wird **vor** dem Theming (09) gebaut und läuft zunächst mit der Standard-Akzentfarbe. So gibt es beim Theming bereits eine sichtbare Fläche, an der die Farbe wirkt — sonst baut man die Farblogik blind. Aus demselben Grund kommt die Live-Preview im Dashboard aus derselben Komponente wie die öffentliche Seite; sie entsteht in 08 und wird in 04 nur eingehängt.
 

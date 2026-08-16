@@ -18,6 +18,19 @@ Regeln:
 
 ## Einträge
 
+## 2026-08-16 — AP 10: Deployment
+- Was passierte: Der Push auf das frisch angelegte private Repo scheiterte mit **„Repository not found"**, obwohl das Repo existierte und `gh repo view` es problemlos auslas. Die Fehlersuche lief zuerst in die falsche Richtung (Repo-Name, Tippfehler, Sichtbarkeit).
+- Ursache: `gh` und Git nutzen getrennte Wege zur Authentifizierung. Ein `gh auth login` auf den neuen Account ändert nichts daran, dass Git seine Zugangsdaten aus dem Windows Credential Manager zieht — dort lag noch das Token des Altaccounts. Bei **privaten** Repos antwortet GitHub auf fehlende Berechtigung mit 404 statt 403, damit die Existenz des Repos nicht verraten wird. Die Meldung zeigt deshalb systematisch auf das falsche Problem.
+- Konsequenz: Bei „not found" auf einem existierenden Repo zuerst `gh auth status` und `git config --get-all credential.helper` prüfen, nicht den Namen. Fix ohne Eingriff in die globale Konfiguration: `gh` als Helper nur fürs Repo setzen (leerer Eintrag zuerst, sonst antwortet der `manager` als Erster). Verallgemeinert: Wenn eine Fehlermeldung „Objekt existiert nicht" sagt, obwohl es existiert, ist Berechtigung die wahrscheinlichere Ursache als Existenz.
+
+- Was passierte: Beim Schreiben der Deployment-Doku stellte sich heraus, dass die Env-Liste im `README.md` seit AP 02 falsch war — sie nannte `NEXT_PUBLIC_SUPABASE_ANON_KEY`, während der Code längst `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` liest. `NEXT_PUBLIC_SITE_URL` fehlte komplett. Vierzehn Arbeitspakete lang ist das niemandem aufgefallen.
+- Ursache: Die Variable wurde in AP 02 umbenannt, die Änderung aber nur im Code und in `.env.local` nachgezogen. Das README wurde seit dem Projektstart nie benutzt — wer lokal arbeitet, hat die `.env.local` schon.
+- Konsequenz: Doku, die niemand nachvollzieht, veraltet unbemerkt. Wenn sich ein Variablenname, ein Befehl oder ein Pfad ändert, gehört im selben Arbeitspaket ein Blick ins README dazu — nicht erst beim Release. Setup-Anleitungen sind der Teil der Doku mit der kürzesten Halbwertszeit.
+
+- Was passierte: Positive Überraschung — der erste Commit über 168 Dateien war ein Nicht-Ereignis: nichts Sensibles im Stage, kein nachträgliches Aussortieren.
+- Ursache: `.gitignore` wurde in der Aufräumrunde **vor** dem Deployment-Paket geschärft (`.agents/`, `.claude/settings.local.json` mit Test-Passwörtern), und Arbeitsstände lagen von Anfang an in `_Claude_Arbeit/` statt im Projektroot.
+- Konsequenz: Die Trennung „Deliverables im Projektroot, Zwischenstände in einem ignorierten Unterordner" zahlt sich genau einmal aus — beim ersten Commit — dann aber vollständig. In neuen Projekten von Tag 1 so aufsetzen, auch wenn lange nicht committet wird.
+
 ## 2026-08-15 — Landingpage auf „/" (Zusatzpaket)
 - Was passierte: Der Lichtschein hinter dem Hero war im ersten Durchgang schlicht nicht da. Die Fläche wirkte flach grau — genau das, was `rules/design-system.md` Regel 2 verbietet. Der Quelltext sah dabei völlig korrekt aus, das Muster war 1:1 aus `auth-shell.tsx` übernommen.
 - Ursache: `-z-10` an einem Kind, dessen Elternelement selbst einen `bg-gradient-to-b` trägt. Der Elternteil bildet ohne eigenen `z-index` **keinen** Stacking-Context, das Kind landet also im Kontext des Roots — und der Elternhintergrund wird darüber gemalt. Der Schein lag hinter der Fläche, die ihn zeigen sollte.

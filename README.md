@@ -2,6 +2,8 @@
 
 Eine Link-in-Bio-App im Stil von Linktree oder Bento.me — gebaut als Kurs-/Demo-Projekt für den Einstieg ins Agentic Coding.
 
+**Live: https://linktree-klon-taupe.vercel.app** — Deployment über Vercel, jeder Push auf `main` erzeugt eine neue Version. Es ist ein Lernprojekt: Das Impressum trägt bewusst Musterdaten, und die Datenbank wird gelegentlich geleert.
+
 User registrieren sich mit Email und Passwort, pflegen ein kleines Profil (Display-Name, Bio, Avatar-URL), verwalten ihre Links per Drag-and-Drop und wählen eine Accent-Color. Das Ergebnis ist eine öffentliche Seite unter `/u/<username>`, die jeder ohne Login aufrufen kann.
 
 ## Tech-Stack
@@ -55,10 +57,15 @@ Vorher `.env.local` im Projekt-Root anlegen:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://<dein-projekt>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<dein-anon-bzw-publishable-key>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<dein-publishable-key>
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Beide Werte stehen im Supabase-Dashboard unter *Project Settings → API*. Neuere Projekte zeigen den Anon-Key als **Publishable Key** — inhaltlich derselbe öffentliche Schlüssel. `.env.local` ist über `.gitignore` ausgeschlossen und gehört nie ins Repo.
+Die ersten beiden Werte stehen im Supabase-Dashboard unter *Project Settings → API*; ältere Projekte nennen den Publishable Key noch **Anon Key** — inhaltlich derselbe öffentliche Schlüssel. `NEXT_PUBLIC_SITE_URL` bestimmt, worauf Bestätigungslinks und `og:image` zeigen: Fehlt die Variable, fällt `getSiteUrl()` auf die pro Deployment wechselnde `VERCEL_URL` zurück. `.env.local` ist über `.gitignore` ausgeschlossen und gehört nie ins Repo.
+
+Dieselben drei Variablen sind in Vercel unter *Settings → Environment Variables* hinterlegt, dort mit der Produktionsadresse als `NEXT_PUBLIC_SITE_URL`.
+
+Für die Registrierung muss zusätzlich in Supabase unter *Authentication → URL Configuration* die Site-URL zur jeweiligen Umgebung passen, sonst zeigt der Link in der Bestätigungsmail ins Leere.
 
 ## Doku-Landkarte
 
